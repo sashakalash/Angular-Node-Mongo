@@ -10,24 +10,19 @@ const readDir = pathToDir => {
   });
 };
 
-const readFile = file => {
+const readFile = name => {
   return new Promise((done, fail) => {
-    fs.readFile(file, conf, (err, content) => {
-      err? fail(err): done({file, content});
+    fs.readFile(name, conf, (err, content) => {
+      err? fail(err): done({name, content});
     });
   });
 };
 
 const readAll = pathToDir => {
-  return new Promise((done, fail) => {
-    readDir(pathToDir)
+  return readDir(pathToDir)
       .then(files => files.map(file => readFile(path.join(pathToDir, file))))
       .then(filesArr => Promise.all(filesArr))
-      .then(contentArr => done(contentArr.map(item => {
-        return {name: item.file, content: item.content};
-      })))
       .catch(err => fail(err));
-    
-  });
 };
+
 module.exports = readAll;
