@@ -20,9 +20,8 @@ const readFile = name => {
 
 const readAll = pathToDir => {
   return readDir(pathToDir)
-      .then(files => files.map(file => readFile(path.join(pathToDir, file))))
-      .then(filesArr => Promise.all(filesArr))
-      .catch(err => fail(err));
+    .then(files => files.map(file => readFile(path.join(pathToDir, file))))
+    .then(filesArr => Promise.all(filesArr));
 };
 
 module.exports = readAll;
