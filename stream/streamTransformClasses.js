@@ -32,8 +32,10 @@ class CTransform extends Transform {
   }
   _transform(chunk, encoding, callback) {
     const hashUpd = hash.update(chunk);
-    this.push(hashUpd.digest('hex'));
-    callback();
+    setTimeout(() => {
+      this.push(hashUpd.toString());
+      callback();
+    }, 1000);
   }
 }
 
