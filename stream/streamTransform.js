@@ -20,8 +20,8 @@ class CTransform extends Transform {
 
 const tf = new CTransform();
 
-const hashOut = input.pipe(tf);
-hashOut.pipe(output);
-hashOut.pipe(process.stdout);
+const hashOutData = input.pipe(tf);
+hashOutData.pipe(output);
+hashOutData.pipe(process.stdout);
 
 
