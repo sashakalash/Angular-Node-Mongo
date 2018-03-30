@@ -5,7 +5,6 @@ const fs = require('fs');
 const input = fs.createReadStream('data.txt');
 const output = fs.createWriteStream('out_data_transform.txt');
 
-// const hashTransform = crypto.createHash('hex');
 const Transform = require('stream').Transform;
 
 class CTransform extends Transform {
