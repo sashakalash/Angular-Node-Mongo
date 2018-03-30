@@ -17,23 +17,23 @@ class CReadable extends Readble {
 }
 
 class CWriteble extends Writeble {
-  constructor (options) {
+  constructor (options = {objectMode: true}) {
     super(options);
   }
   _write(chunk, encoding, callback) {
-    console.log(chunk.toString());
+    console.log(chunk);
     callback();
   }
 }
 
 class CTransform extends Transform {
-  constructor (options) {
+  constructor (options = {objectMode: true}) {
     super(options);
   }
   _transform(chunk, encoding, callback) {
     const hashUpd = hash.update(chunk);
     setTimeout(() => {
-      this.push(hashUpd.toString());
+      this.push(hash);
       callback();
     }, 1000);
   }
