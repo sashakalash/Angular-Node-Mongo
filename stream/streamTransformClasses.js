@@ -33,7 +33,7 @@ class CTransform extends Transform {
   _transform(chunk, encoding, callback) {
     const hashUpd = hash.update(chunk);
     setTimeout(() => {
-      this.push(hashUpd + ` | ${chunk}`);
+      this.push(hashUpd.toString());
       callback();
     }, 1000);
   }
@@ -43,7 +43,8 @@ const tfStream = new CTransform();
 const readStream = new CReadable();
 const writeStream = new CWriteble();
 
-readStream.pipe(tfStream);
-tfStream.pipe(writeStream);
+pump(readStream, tfStream, writeStream, (e) => console.error(e));
+
+
 
 
