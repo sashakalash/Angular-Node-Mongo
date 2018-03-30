@@ -9,22 +9,23 @@ const pump = require('pump');
 class CReadable extends Readble {
   constructor (options) {
     super(options);
-    this.count = 0;
   }
   _read() {
-    const result = this.push(this.count.toString());
+    const digit = Math.round(Math.random() * 9);
+    this.push(digit.toString());
   }
 }
 
 class CWriteble extends Writeble {
   constructor (options) {
     super(options);
-    this.count = 0;
   }
   _write(chunk, encoding, callback) {
-    console.log = (chunk) => {
-      process.stdout.write(`${chunk}\n`);
-    };
+    console.log(chunk);
+    callback();
+    // console.log = (chunk) => {
+    //   process.stdout.write(`${chunk}\n`);
+    // };
   }
 }
 
@@ -34,7 +35,7 @@ class CTransform extends Transform {
   }
   _transform(chunk, encoding, callback) {
     const hashUpd = hash.update(chunk);
-    setInterval((hashUpd) => this.push(hashUpd), 1000);
+    setInterval(() => this.push(hashUpd), 1000);
     callback();
   }
 }
