@@ -16,9 +16,6 @@ class CTransform extends Transform {
     this.push(hashUpd.digest('hex'));
     callback();
   }
-  _flush(doneCallback) {
-    
-  }
 }
 
 const tf = new CTransform();
