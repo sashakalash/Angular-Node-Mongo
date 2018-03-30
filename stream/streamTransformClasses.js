@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const hash = crypto.createHash('sha256');
+const hash = crypto.createHash('md5');
 
 const Transform = require('stream').Transform;
 const Readble = require('stream').Readable;
@@ -21,11 +21,8 @@ class CWriteble extends Writeble {
     super(options);
   }
   _write(chunk, encoding, callback) {
-    console.log(chunk);
+    console.log(chunk.toString());
     callback();
-    // console.log = (chunk) => {
-    //   process.stdout.write(`${chunk}\n`);
-    // };
   }
 }
 
@@ -35,7 +32,7 @@ class CTransform extends Transform {
   }
   _transform(chunk, encoding, callback) {
     const hashUpd = hash.update(chunk);
-    setInterval(() => this.push(hashUpd), 1000);
+    this.push(hashUpd.digest('hex'));
     callback();
   }
 }
@@ -44,6 +41,7 @@ const tfStream = new CTransform();
 const readStream = new CReadable();
 const writeStream = new CWriteble();
 
-pump(readStream, tfStream, writeStream, (e) => console.error(e));
+readStream.pipe(tfStream);
+tfStream.pipe(writeStream);
 
 
