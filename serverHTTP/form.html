@@ -3,12 +3,37 @@
   <head>
     <meta charset="utf-8">
     <title>Yandex.translate</title>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('.form');
+        const output = document.querySelector('output');
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          const formData = new FormData(form);
+          const opt = {
+            body: formData,
+            method: 'POST',
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          };
+          fetch('/localhost/3000', opt)
+            .then(res => res.text())
+            .then(res => {
+              console.log(res)
+              output.textContent = res
+            });
+        });
+      });
+    </script>
   </head>
   <body>
-    <form action="/translate.js" method="post">
+    <form class="form">
       <label for="text">Введите текст для перевода</label>
-      <input id="text_to_translate" type="text">
-      <button id="send_button">Перевести</button>
+      <input id="text_to_translate" type="text" name="text">
+      <button id="send_button" type=“submit”>Перевести</button>
+      <label for="text">Перевод</label>
+      <output></output>
     </form>
     <output id="answer"></output>
   </body>
