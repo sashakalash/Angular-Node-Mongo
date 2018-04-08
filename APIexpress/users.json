@@ -1,0 +1,34 @@
+{
+  "users": [
+  {   
+    "name": "Adam",
+    "score": "10100",
+    "id": "1"
+  },
+  {
+    "name": "James",
+    "score": "777",
+    "id": "2"
+  },
+  {
+    "name": "Richie",
+    "score": "9090",
+    "id": "3"
+  },
+  {
+    "name": "Peter",
+    "score": "1231",
+    "id": "4"
+  },
+  {
+    "name": "Patrik",
+    "score": "48484",
+    "id": "5"
+  },
+  {
+    "name": "Philipp",
+    "score": "5858",
+    "id": "6"
+  }
+  ]
+}
