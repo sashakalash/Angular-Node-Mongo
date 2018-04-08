@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-
-const users = [];
+const fetch = require('node-fetch');
+const users = require('./users').users;
 
 app.use(bodyParser.json());
 
