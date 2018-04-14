@@ -14,16 +14,16 @@ const io = require('socket.io')(http);
 let numUsers = 0;
 let addedUser = false;
 const addingUser = (nickname) => {
-    if (addedUser) return;
-    numUsers++;
-    addedUser = true;
-    io.emit('chat message', `There are ${numUsers} user(s)`);
+    
     // io.broadcast.emit('chat message', `${nickname} joined.\nThere are ${numUsers} users`);
 };
 
 io.on('connection', socket => {
   socket.on('added user', (nickname) => {
-    addingUser(nickname);
+    if (addedUser) return;
+    numUsers++;
+    addedUser = true;
+    socket.emit('chat message', `There are ${numUsers} user(s)`);
   });
   socket.on('chat message', msg => {
     io.emit('chat message', msg);
