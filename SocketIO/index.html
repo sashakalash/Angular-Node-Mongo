@@ -127,10 +127,8 @@
 
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const username = login.value.trim();
         loginPage.style.setProperty('--loginVis', 'hidden');
-        socket.emit('added user', username);
-        return false;
+        socket.emit('added user', login.value);
       });
 
       form.addEventListener('submit', (evt) => {
@@ -139,12 +137,25 @@
         input.value = null;
         return false;
       })
-      socket.on('chat message', msg => {
+
+      const chatMess = (msg) => {
         const text = document.createElement('li');
         text.innerText = msg;
         messages.appendChild(text);
+      }
+
+      socket.on('chat message', msg => {
+        chatMess(msg);
       })
-    
+
+      socket.on('login', numUsers => {
+        chatMess(`There are ${numUsers.numUsers} users`);
+      });
+
+      socket.on('user joined', data => {
+        console.log(`${data.nickname} joined.\nThere are ${data.numUsers} users`)
+        socket.emit('chat message', `${data.nickname} joined.\nThere are ${data.numUsers} users`);
+      })
     </script>
   </body>
 </html>
