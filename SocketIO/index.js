@@ -19,8 +19,8 @@ let addedUser = false;
 
 io.on('connection', socket => {
   socket.on('added user', (nickname) => {
-    if (nickname) return;
-    cosket.nickname = nickname;
+    if (addedUser) return;
+    socket.nickname = nickname;
     numUsers++;
     addedUser = true;
     socket.emit('login', {
@@ -31,6 +31,8 @@ io.on('connection', socket => {
       numUsers: numUsers
     });
   });
+
+
   socket.on('chat message', msg => {
     io.emit('chat message', msg);
   });
