@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * {
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+      }
+
+      body { 
+        font: 13px Helvetica, Arial; 
+      }
+
+      form.send_mess_form { 
+        background: #000; 
+        padding: 3px; 
+        position: fixed; 
+        bottom: 0; 
+        width: 100%; 
+      }
+
+      form.send_mess_form input { 
+        border: 0; 
+        padding: 10px; 
+        width: 90%; 
+        margin-right: .5%; 
+      }
+
+      form.send_mess_form button { 
+        width: 9%; 
+        background: rgb(130, 224, 255); 
+        border: none; 
+        padding: 10px; 
+      }
+
+      ul { 
+        list-style-type: none; 
+        margin: 0; 
+        padding: 0; 
+      }
+
+      #messages li { 
+        padding: 5px 10px; 
+      }
+
+      #messages li:nth-child(odd) { 
+        background: #eee; 
+      }
+
+      .pages {    
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      }
+
+      .page {
+      height: 100%;
+      position: absolute;
+      width: 100%;
+      }
+
+      .login.page {
+      background-color: #000;
+      visibility: var(--loginVis);
+      }
+
+      .login.page .form {
+      height: 100px;
+      margin-top: -100px;
+      position: absolute;
+      text-align: center;
+      top: 50%;
+      width: 100%;
+      }
+
+      .login.page .title {
+      font-size: 200%;
+      color: #fff;
+      font-weight: 100;
+      }
+
+      .login.page .form .usernameInput {
+      background-color: transparent;
+      border: none;
+      border-bottom: 2px solid #fff;
+      outline: none;
+      padding-bottom: 15px;
+      text-align: center;
+      width: 400px;
+      font-size: 200%;
+      color: #fff;
+      letter-spacing: 3px;
+      } 
+    </style>
+  </head>
+  <body>
+    <ul class="pages">
+      <li class="chat page">
+        <ul id="messages"></ul>
+        <form action="" class="send_mess_form">
+          <input id="m" autocomplete="off" /><button>Send</button>
+        </form>
+      </li>
+      <li class="login page">
+        <div class="form">
+          <h3 class="title">Enter you nickname</h3>
+          <form>
+              <input class="usernameInput" type="text" maxlength="14">
+          </form>
+        </div>
+      </li>
+    </ul>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const loginPage = document.querySelector('.login.page');
+      const login = document.querySelector('.login.page input');
+      const loginForm = document.querySelector('.login.page form');
+      const form = document.querySelector('form');
+      const input = document.querySelector('input');
+      const messages = document.querySelector('#messages');
+      
+      const socket = io();
+
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        loginPage.style.setProperty('--loginVis', 'hidden');
+        console.log(login.value)
+        socket.emit('added user', login.value);
+      });
+
+      form.addEventListener('submit', (evt) => {
+        evt.preventDefault();
+        socket.emit('chat message', input.value);
+        input.value = null;
+        return false;
+      })
+      socket.on('chat message', msg => {
+        const text = document.createElement('li');
+        text.innerText = msg;
+        messages.appendChild(text);
+      })
+      socket.on('login', numUsers => {
+        console.log(`There are ${numUsers} users`)
+        socket.emit('chat message', `There are ${numUsers} users`);
+      });
+      socket.on('user joined', data => {
+        console.log(`${data.nickname} joined.\nThere are ${data.numUsers} users`)
+        socket.emit('chat message', `${data.nickname} joined.\nThere are ${data.numUsers} users`);
+      })
+    </script>
+  </body>
+</html>
