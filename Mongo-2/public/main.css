@@ -6,11 +6,18 @@
 .lastname {
   border-color: var(--lastnameBrColor);
   background-color: var(--lastnameBgColor);
-
 }
 
 .phonenumber {
   border-color: var(--phoneBrColor);
   background-color: var(--phoneBgColor);
+}
 
+.find_field {
+  border-color: var(--findBrColor);
+  background-color: var(--findBgColor);
+}
+
+ul {
+  list-style-type: none;
 }

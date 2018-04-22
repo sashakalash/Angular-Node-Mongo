@@ -16,8 +16,8 @@
       <button class="send_contact" type=“submit”>Записать контакт</button>
     </form>
     <form class="find_form">
-      <select name="find_contact" id="find_contact" >
-        <option selected value=false>Критерий поиска</option>
+      <select name="find_contact" class="contact_select" >
+        <option selected value=''>Критерий поиска</option>
         <option value="name">Имя</option>
         <option value="lastname">Фамилия</option>
         <option value="phonenumber">Телефон</option>
@@ -27,8 +27,9 @@
       <button class="find" type=“submit”>Найти</button>
     </form>
     <button class="show" type=“submit”>Показать все</button>
-    <label for="text">Результат</label>
-    <output class="output_field"></output>
+    <output class="output_field">
+      <ul></ul>
+    </output>
     <script src="./client.js"></script>
   </body>
 </html>
