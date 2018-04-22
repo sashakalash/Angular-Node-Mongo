@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const users = require('./users').users;
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 /*
@@ -109,4 +110,4 @@ app.post('/api/rpc/', (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('App started on 3000 port'));
+app.listen(PORT, () => console.log(`App started on ${PORT} port`));

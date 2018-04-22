@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const PORT = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const ctlrEmptyReq = (req, res) => {
@@ -49,6 +50,6 @@ app.get('/hello/:name', ctlrHelloNameReq);
 app.all('/sub/*', ctlrAnyReq);
 app.post('/post', middleCheckHed, ctrlPost);
 
-app.listen(3000, () => {
-  console.log('App listening on port 3000!');
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}!`);
 });

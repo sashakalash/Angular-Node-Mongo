@@ -17,7 +17,7 @@
               'Content-Type': 'multipart/form-data'
             }
           };
-          fetch('/localhost/3000', opt)
+          fetch('/', opt)
             .then(res => res.text())
             .then(res => output.textContent = res)
             .catch(err => output.textContent = err.message)
