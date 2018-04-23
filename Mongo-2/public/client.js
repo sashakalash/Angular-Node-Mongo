@@ -8,8 +8,11 @@ const contactSelect = document.querySelector('.contact_select');
 const findContactInput = document.querySelector('.find_field');
 const findBtn = document.querySelector('.find');
 const showBtn = document.querySelector('.show');
+const editBtn = document.querySelector('.edit');
+const deleteBtn = document.querySelector('.delete');
 const output = document.querySelector('.output_field');
 const outputList = output.querySelector('ul');
+
 
 sendContactBtn.disabled = true;
 nameField.style.setProperty('--nameBrColor', '#d6d0d0');
@@ -21,6 +24,10 @@ nameField.style.setProperty('--nameBgColor', 'transparent');
 lastnameField.style.setProperty('--lastnameBgColor', 'transparent');
 phonenumberField.style.setProperty('--phoneBgColor', 'transparent');
 contactSelect.style.setProperty('--findBgColor', 'transparent');
+
+editBtn.style.setProperty('--editVis', 'hidden');
+deleteBtn.style.setProperty('--deleteVis', 'hidden');
+let isEdited = false;
 
 //input data validation 
 const phoneRegEx = /8?\d+/;
@@ -43,8 +50,10 @@ const allFieldsValidate = () => {
   }
 };
 
-sendForm.addEventListener('input', event => {
+
+const sendFormFunc = event => {
   let regExName, brColorName, bgColorName;
+
   if (event.target.classList.contains('phonenumber')) {
     regExName = phoneRegEx;
     borderName = '--phoneBrColor';
@@ -62,46 +71,144 @@ sendForm.addEventListener('input', event => {
     wrongData(event.target, borderName, bgName);
   }
   allFieldsValidate();
+};
+
+sendForm.addEventListener('input', sendFormFunc);
+
+//----------------------------
+
+//delete contact
+
+deleteBtn.addEventListener('click', () => {
+  const id = document.querySelector('.listItem.choosed').dataset.id;
+  const opt = {
+    body: id,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain'
+    }
+  };
+  fetch('/delete', opt)
+    .then(res => res.text())
+    .then(res => outputList.textContent = res)
+    .catch(err => outputList.textContent = err.message);
+  deleteBtn.style.setProperty('--deleteVis', 'hidden');
 });
 
+//----------------------------
+
 //send data
-sendContactBtn.addEventListener('click', event => {
+
+const sendData = event => {
+  let url = '/';
+  let data = {
+    name: nameField.value, 
+    lastname: lastnameField.value,
+    phone: phonenumberField.value
+  };
+
+  if (isEdited) {
+    url += 'update';
+    isEdited = false;
+    data.id = document.querySelector('.listItem.choosed').dataset.id;
+  }
   const opt = {
-    body: JSON.stringify({
-      name: nameField.value, 
-      lastname: lastnameField.value,
-      phone: phonenumberField.value
-    }),
+    body: JSON.stringify(data),
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     }
   };
-  fetch('/', opt)
+  fetch(url, opt)
     .then(res => res.text())
-    .then(res => output.textContent = res)
-    .catch(err => output.textContent = err.message);
+    .then(res => outputList.textContent = res)
+    .catch(err => outputList.textContent = err.message);
   nameField.value = null;
   lastnameField.value = null;
   phonenumberField.value = null;
+  sendContactBtn.disabled = true;
+  
+};
+
+sendContactBtn.addEventListener('click', sendData)
+
+//-----------------------------
+
+//editContact
+
+
+editBtn.addEventListener('click', event => {
+  const choosedContact = document.querySelector('.listItem.choosed');
+  nameField.value = choosedContact.querySelector('.nameItem').dataset.value;
+  lastnameField.value = choosedContact.querySelector('.lastnameItem').dataset.value;
+  phonenumberField.value = choosedContact.querySelector('.phoneItem').dataset.value;
+  editBtn.style.setProperty('--editVis', 'hidden');
+  isEdited = true;
 });
 
-//show all
-const showContactList = (arr) => {
-  outputList.textContent = null;
-  arr.forEach(item => {
-    const listItem = document.createElement('li');
-    listItem.textContent = `Имя: ${item.name} Фамилия: ${item.lastname} Телефон: ${item.phone}`;
-    outputList.appendChild(listItem);
+
+
+
+const editContact = () => {
+  outputList.addEventListener('click', event => {
+    if (!event.target.classList.contains('listItem')) {
+      return;
+    }
+    if (event.target.classList.contains('choosed')) {
+      return;
+    } else if (!outputList.querySelector('.choosed')){
+      event.target.classList.add('choosed');
+    }
+    outputList.querySelector('.choosed').classList.remove('choosed');
+    event.target.classList.add('choosed');
+       
+    editBtn.style.setProperty('--editVis', 'visible');
+    deleteBtn.style.setProperty('--deleteVis', 'visible');
+
+   
   });
+}; 
+//-----------------------------
+
+//show all
+const showContact = (data) => {
+  outputList.textContent = null;
+  data.forEach(item => {
+    const listItem = document.createElement('li');
+
+    const nameItem = document.createElement('p');
+    nameItem.classList.add('nameItem');
+    nameItem.textContent = item.name;
+    nameItem.dataset.value = item.name;
+
+    const lastnameItem = document.createElement('p');
+    lastnameItem.classList.add('lastnameItem');
+    lastnameItem.textContent = item.lastname;
+    lastnameItem.dataset.value = item.lastname;
+
+    const phoneItem = document.createElement('p');
+    phoneItem.classList.add('phoneItem');
+    phoneItem.textContent = item.phone;
+    phoneItem.dataset.value = item.phone;
+      
+    listItem.appendChild(nameItem);
+    listItem.appendChild(lastnameItem);
+    listItem.appendChild(phoneItem);
+    listItem.classList.add('listItem');
+    listItem.dataset.id = item['_id'];
+    outputList.appendChild(listItem);
+
+  });
+  editContact();
 };
 
 showBtn.addEventListener('click', event => {
-  fetch('/show/')
+  fetch('/show')
     .then(res => res.json())
-    .then(res => showContactList(res))
+    .then(res => showContact(res))
     .catch(err => output.textContent = err.message);
 });
+//---------------------------------
 
 //find contact
 const findDataValidate = (RegEx, data, field) => {
@@ -134,6 +241,10 @@ findBtn.addEventListener('click', event => {
   };
   fetch('/find', opt)
   .then(res => res.json())
-  .then(res => showContactList(res))
+  .then(res => showContact(res))
   .catch(err => output.textContent = err.message);
+  editBtn.style.setProperty('--editVis', 'visible');
+  deleteBtn.style.setProperty('--deleteVis', 'visible');
 });
+//------------------------------
+

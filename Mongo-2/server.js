@@ -41,6 +41,21 @@ const findContact = (collection, data, type) => {
 
 };
 
+const editContact = (collection, data) => {
+  return new Promise((done, fail) => {
+    collection.update({id: data.id}, {name: data.name}, {lastname: data.lastname}, {phone: data.phone});
+    done();
+  });
+};
+
+const deleteContact = (collection, id) => {
+  return new Promise((done, fail) => {
+    console.log(id)
+    collection.remove({id: id});
+    done();
+  });
+};
+
 MongoClient.connect(url, (err, db) => {
   if (err) {
     console.log(`Couldn't connect to Mongo's server. Err: ${err}`);
@@ -63,7 +78,7 @@ MongoClient.connect(url, (err, db) => {
       });
     });
 
-  app.get('/show/', (req, res) => {
+  app.get('/show', (req, res) => {
     showAll(collection)
       .then(result => res.send(result))
       .catch(err => {
@@ -77,6 +92,24 @@ MongoClient.connect(url, (err, db) => {
     const type = req.body.type;
     findContact(collection, data, type)
       .then(result => res.send(result))
+      .catch(err => {
+        res.status(404);
+        res.send(err);
+      });
+  });
+
+  app.post('/update', (req, res) => {
+    editContact(collection, req.body)
+      .then(result => res.send('Contact updated'))
+      .catch(err => {
+        res.status(404);
+        res.send(err);
+      });
+  });
+
+  app.post('/delete', (req, res) => {
+    deleteContact(collection, req.body)
+      .then(result => res.send('Contact deleted'))
       .catch(err => {
         res.status(404);
         res.send(err);
