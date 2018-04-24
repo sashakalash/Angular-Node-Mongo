@@ -88,7 +88,6 @@ deleteBtn.addEventListener('click', () => {
       'Content-Type': 'application/json'
     }
   };
-  console.log(opt.body)
   fetch('/delete', opt)
     .then(res => res.text())
     .then(res => outputList.textContent = res)
