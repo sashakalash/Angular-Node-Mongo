@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
 const url = 'mongodb://localhost:27017/contactBook';
+const ObjectID = mongodb.ObjectID;
 
 const sendToBook = (collection, name, lastname, phone) => {
   return new Promise ((done, fail) => {
@@ -43,8 +44,9 @@ const findContact = (collection, data, type) => {
 
 const editContact = (collection, data) => {
   return new Promise((done, fail) => {
+    const selector = {_id: new ObjectID(data.id)};
     collection.update(
-      {_id: `ObjectId("${data.id}")`}, 
+      selector, 
       {
         name: data.name, 
         lastname: data.lastname, 
@@ -58,7 +60,8 @@ const editContact = (collection, data) => {
 
 const deleteContact = (collection, id) => {
   return new Promise((done, fail) => {
-    collection.remove({_id: ObjectId("${id}")})
+    const selector = {_id: new ObjectID(id)};
+    collection.remove(selector)
      .then(res => done(res))
      .catch(err => fail(err));
   });
@@ -110,7 +113,6 @@ MongoClient.connect(url, (err, db) => {
     editContact(collection, req.body)
       .then(result => res.send('Contact updated'))
       .catch(err => {
-        console.log(err)
         res.status(404);
         res.send(err);
       });
@@ -119,10 +121,8 @@ MongoClient.connect(url, (err, db) => {
   app.post('/delete', (req, res) => {
     deleteContact(collection, req.body.id)
       .then(result => {
-        console.log(result)
         res.send('Contact deleted')})
       .catch(err => {
-        console.log(err)
         res.status(404);
         res.send(err);
       });
