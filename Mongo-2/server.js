@@ -44,20 +44,23 @@ const findContact = (collection, data, type) => {
 const editContact = (collection, data) => {
   return new Promise((done, fail) => {
     collection.update(
-      {_id: data.id}, 
+      {_id: `ObjectId("${data.id}")`}, 
       {
         name: data.name, 
         lastname: data.lastname, 
-        phone: data.phone}, 
-      {upsert: true});
-    done();
+        phone: data.phone
+      }
+    )
+      .then(res => done(res))
+      .catch(err => fail(err));
   });
 };
 
 const deleteContact = (collection, id) => {
   return new Promise((done, fail) => {
-    collection.remove({_id: id});
-    done();
+    collection.remove({_id: ObjectId("${id}")})
+     .then(res => done(res))
+     .catch(err => fail(err));
   });
 };
 
@@ -107,16 +110,19 @@ MongoClient.connect(url, (err, db) => {
     editContact(collection, req.body)
       .then(result => res.send('Contact updated'))
       .catch(err => {
+        console.log(err)
         res.status(404);
         res.send(err);
       });
   });
 
   app.post('/delete', (req, res) => {
-    console.log(req.body)
-    deleteContact(collection, req.body)
-      .then(result => res.send('Contact deleted'))
+    deleteContact(collection, req.body.id)
+      .then(result => {
+        console.log(result)
+        res.send('Contact deleted')})
       .catch(err => {
+        console.log(err)
         res.status(404);
         res.send(err);
       });

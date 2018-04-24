@@ -82,10 +82,10 @@ sendForm.addEventListener('input', sendFormFunc);
 deleteBtn.addEventListener('click', () => {
   const id = document.querySelector('.listItem.choosed').dataset.id;
   const opt = {
-    body: JSON.stringify(id),
+    body: JSON.stringify({id: id}),
     method: 'POST',
     headers: {
-      'Content-Type': 'text/plain'
+      'Content-Type': 'application/json'
     }
   };
   console.log(opt.body)
