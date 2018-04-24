@@ -82,12 +82,13 @@ sendForm.addEventListener('input', sendFormFunc);
 deleteBtn.addEventListener('click', () => {
   const id = document.querySelector('.listItem.choosed').dataset.id;
   const opt = {
-    body: id,
+    body: JSON.stringify(id),
     method: 'POST',
     headers: {
       'Content-Type': 'text/plain'
     }
   };
+  console.log(opt.body)
   fetch('/delete', opt)
     .then(res => res.text())
     .then(res => outputList.textContent = res)
@@ -101,7 +102,7 @@ deleteBtn.addEventListener('click', () => {
 
 const sendData = event => {
   let url = '/';
-  let data = {
+  const data = {
     name: nameField.value, 
     lastname: lastnameField.value,
     phone: phonenumberField.value
@@ -109,6 +110,7 @@ const sendData = event => {
 
   if (isEdited) {
     url += 'update';
+
     isEdited = false;
     data.id = document.querySelector('.listItem.choosed').dataset.id;
   }
