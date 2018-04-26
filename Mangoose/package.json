@@ -1,0 +1,21 @@
+{
+  "name": "mangoose",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sashakalash/Angular-Node-Mongo/tree/master/Mangoose"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.16.3",
+    "mongo": "0.1.0",
+    "mongodb": "3.0.7",
+    "mongoose": "5.0.16"
+  }
+}
