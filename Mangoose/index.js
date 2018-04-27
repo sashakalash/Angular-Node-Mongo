@@ -17,8 +17,13 @@ const tasksScheme = new Schema({
   name: String, 
   descrition: String, 
   status: Boolean, 
-  user: Schema.Types.ObjectId
+  user: Schema.Types.ObjectId,
 });
+
+tasksScheme.method.changeStatus = (id, cb) => {
+  return this.findById(id, cb);
+    
+};
 
 const User = mongoose.model("User", userScheme);
 const Task = mongoose.model("Tasks", tasksScheme);
@@ -104,10 +109,7 @@ app.get('/show/:reqType', (req, res) => {
   obj.find((err, result) => callbackDB(err, res, result));
 });
 
-tasksScheme.statics.changeStatus = (id, cb) => {
-  return this.findById(id, cb);
-    
-};
+
 
 app.post('/change_status', (req, res) => {
   Task.changeStatus(req.body.id, (err, result) => {
