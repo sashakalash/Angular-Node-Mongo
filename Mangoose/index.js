@@ -61,25 +61,12 @@ const callbackDB = (err, response, answer) => {
   mongoose.disconnect(); 
 };
 
-app.post('/add/:reqType', (req, res) => {
-  let newObj, answer; 
-  if (req.params.reqType === 'user') {
-    newObj = new User({name: req.body.name});
-    answer = 'Создан объект';
-  } else if (req.params.reqType === 'task') {
-    newObj = new Task({
-      name: req.body.name,
-      description: req.body.description,
-      status: req.body.status,
-      user: req.body.id
-    });
-    answer = 'Создана задача';
-  }
-
+app.post('/add/user', (req, res) => {
+  const user = new User({name: req.body.name});
   mongoose.connect(url);
-  newObj.save()
+  user.save()
     .then(doc => {
-      res.send(answer + ' ' + doc);
+      res.send(`Создан объект ${doc}`);
       mongoose.disconnect();  
     })
     .catch(err => {
@@ -87,42 +74,53 @@ app.post('/add/:reqType', (req, res) => {
       res.send(err);
       mongoose.disconnect();
     });
- 
 });
 
-app.post('/edit/:reqType', (req, res) => {
+app.post('/add/task', (req, res) => {
+  const task = new Task({
+    name: req.body.name,
+    description: req.body.description,
+    status: req.body.status,
+    user: req.body.id
+  });
+  answer = 'Создана задача';
+  mongoose.connect(url);
+  task.save()
+    .then(doc => {
+      res.send(`Создана задача ${doc}`);
+      mongoose.disconnect();  
+    })
+    .catch(err => {
+      res.status(404);
+      res.send(err);
+      mongoose.disconnect();
+    });
+});  
+
+app.post('/edit/user', (req, res) => {
   mongoose.connect(url);
   const query = {_id: new ObjectId(req.body.id)};
-  let obj, objToChange, answer; 
-
-  if (req.params.reqType === 'user') {
-    obj = User;
-    objToChange = {name: req.body.name};
-    answer = `Изменен объект ${req.body.name}`;
-  } else if (req.params.reqType === 'task') {
-    obj = Task;
-    //req => id: ObjectID, "change": {key: value}
-    objToChange = {$set: req.body.change};
-    answer = `Изменена задача ${req.body.id}`;
-  }
-console.log(objToChange)
-  obj.update(query, objToChange, (err, result) => callbackDB(err, res, answer));
+  const toChange = {name: req.body.name};
+  User.update(query, toChange, (err, result) => callbackDB(err, res, `Изменен объект ${req.body.name}`));
 });
 
+app.post('/edit/task', (req, res) => {
+  mongoose.connect(url);
+  const toChange = {$set: req.body.change};
+  Task.update(query, toChange, (err, result) => callbackDB(err, res, `Изменена задача ${req.body.id}`));
 
-app.post('/delete/:reqType', (req, res) => {
+});
+
+app.post('/delete/user', (req, res) => {
   mongoose.connect(url);
   const query = {_id: new ObjectId(req.body.id)};
-  let obj, answer; 
+  User.remove(query, (err, result) => callbackDB(err, res, `Удален объект ${req.body.id}`));
+});
 
-  if (req.params.reqType === 'user') {
-    obj = User;
-    answer = `Удален объект ${req.body.id}`;
-  } else if (req.params.reqType === 'task') {
-    obj = Task;
-    answer = `Удалена задача ${req.body.id}`;
-  }
-  obj.remove(query, (err, result) => callbackDB(err, res, answer));
+app.post('/delete/user', (req, res) => {
+  mongoose.connect(url);
+  const query = {_id: new ObjectId(req.body.id)};
+  Task.remove(query, (err, result) => callbackDB(err, res, `Удалена задача ${req.body.id}`));
 });
 
 app.get('/show/:reqType', (req, res) => {
