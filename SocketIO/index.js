@@ -19,17 +19,17 @@ io.on('connection', socket => {
   let addedUser = false;
    
   socket.on('create', (roomNumber) => {
-    socket.broadcast.to(socket.room).emit('chat message', `${socket.nickname} has left ${socket.room}`);
     socket.leave(socket.room);
     socket.join(roomNumber);
-    socket.to(roomNumber).emit('chat message', `You've  joined to ${roomNumber}`);
+    socket.broadcast.to(socket.room).emit('chat message', `${socket.nickname} has left ${socket.room}`);
     socket.room = roomNumber;
+    socket.emit('chat message', `You've  joined to ${socket.room}`);
   });
   
   socket.on('added user', (nickname) => {
     if (addedUser) return;
     socket.nickname = nickname;
-    numUsers++;
+    ++numUsers;
     addedUser = true;
     socket.join('main');
     socket.room = 'main';
@@ -45,5 +45,10 @@ io.on('connection', socket => {
 
   socket.on('chat message', msg => {
     io.to(socket.room).emit('chat message', msg);
+  });
+
+  socket.on('disconnect', () => {
+    --numUsers;
+    io.to(socket.room).emit('chat message', `${socket.nickname} has left chat. There are ${numUsers} users`);
   });
 });
