@@ -145,8 +145,10 @@ app.post('/delegate', (req, res) => {
 
 app.post('/find', (req, res) => {
   mongoose.connect(url);
-  const query = req.body.name? {name:req.body.name}: {description:req.body.description};
-  Task.find(query, (err, result) => callbackDB(err, res, result));
+  Task.find({$or : [{
+    name: {$regex:req.body.name}},  
+    {description: {$regex:req.body.description}}
+  ]}, (err, result) => callbackDB(err, res, result));
 });
 
 app.listen(PORT, () => console.log(`App started on ${PORT} port`));
