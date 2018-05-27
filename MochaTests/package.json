@@ -1,0 +1,18 @@
+{
+  "name": "MochaTests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "pokemon.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
+}
