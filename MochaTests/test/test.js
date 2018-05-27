@@ -6,7 +6,7 @@ const expect = require('chai').expect;
 const assert = require('chai').assert;
 const supertest = require('supertest');
 
-describe.skip('PokemonTesting', () => {
+describe('PokemonTesting', () => {
   it('Pokemon.show() testing: returns Pokemon object with propertys name/level', () => {
     const pokemon = new Pokemon('test1', 'test2');
     expect(pokemon).to.have.property('name');
@@ -16,7 +16,7 @@ describe.skip('PokemonTesting', () => {
   });
 });
 
-describe.skip('PokemonListTesting', () => {
+describe('PokemonListTesting', () => {
   let pokemonList, pokemon;
 
   beforeEach(() => {
@@ -57,50 +57,43 @@ describe.skip('PokemonListTesting', () => {
 describe('REST API', () => {
   let server;
 
-  beforeEach((done) => {
-    server = app.listen(done);
+  before(() => {
+    const call = require('../app');
+    call()
+      .then(() => server = supertest.agent('http://localhost:3000'))
+      .catch(err => console.log(err));
   });
 
-  afterEach((done) => {
-    server.close(done);
+  it('POST /add должен вернуть id пользователя', (done) => {
+    server
+      .post('/add')
+      .send({name: 'Boris', userId: 100})
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .end((err, res) => {
+        if (err) { 
+          console.error(err)
+          done(); 
+        }
+        assert.equal(res.status, 200);
+        assert.ok(res.body);
+        assert.equal(res.body, 100);
+        done(); 
+      });
   });
 
-  const call = require('../app');
-  
-  call()
-  .then(() => {
-      server = supertest.agent('http://localhost:3000');
-      it('POST /add должен вернуть id пользователя', (done) => {
-        server
-          .post('/add')
-          .send({name: 'Boris', userId: 100})
-          .set('Accept', 'application/json')
-          .set('Content-Type', 'application/json')
-          .end((err, res) => {
-            if (err) { 
-              console.error(err)
-              done(); 
-            }
-            assert.equal(res.status, 200);
-            assert.ok(res.body);
-            assert.equal(res.body.userId, 100);
-          });
+  it('GET /delete/::userId должен вернуть код 200', (done) => {
+    server
+      .get('/delete/:userId')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { 
+          console.error(err)
+          done(); 
+        }
+        assert.equal(res.status, 200);
+        done(); 
       });
-      it.skip('GET /delete/::userId должен вернуть код 200', (done) => {
-        server
-          .get('/delete/:userId')
-          .expect(200)
-          .end((err, res) => {
-            if (err) { 
-              console.error(err)
-              done(); 
-            }
-            assert.equal(res.status, 200);
-          });
-      });
-  })
-  .catch(err => console.error(err));
-
-
+  });
 });
 
