@@ -1,11 +1,17 @@
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
+
 const serverCall = () => {
   return new Promise((done, fail) => {
-    app.listen(PORT, done());
+    const express = require('express');
+    const app = express();
+    const PORT = process.env.PORT || 3000;
+    app.get('/', (req, res) => {
+      res.status(200);
+      done();
+    });
+    app.listen(PORT);
   });
 };
-module.export = {f: serverCall};
+
+module.export = serverCall;
 
 

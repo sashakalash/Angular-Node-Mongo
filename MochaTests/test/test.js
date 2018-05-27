@@ -56,12 +56,11 @@ describe('PokemonListTesting', () => {
 
 describe('REST API', () => {
   let server;
-  let x = require('../app');
-console.log(x.f)
-// .then(() => {
-//     console.log(`App listening on port ${PORT}!`);
-//     server = supertest.agent('http://localhost:3000');
-//   });
+require('../app')()
+  .then(() => {
+      console.log(`App listening on port ${PORT}!`);
+      server = supertest.agent('http://localhost:3000');
+    });
       
 
 
