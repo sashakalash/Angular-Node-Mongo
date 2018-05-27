@@ -4,6 +4,7 @@ const Pokemon = pokemons.Pokemon;
 const Pokemonlist = pokemons.Pokemonlist;
 const expect = require('chai').expect;
 const assert = require('chai').assert;
+const supertest = require('supertest');
 
 describe('PokemonTesting', () => {
   it('Pokemon.show() testing: returns Pokemon object with propertys name/level', () => {
@@ -38,26 +39,31 @@ describe('PokemonListTesting', () => {
       assert.deepEqual(item, pokemon);
       expect(item).to.have.property('show');
     });
-    
   });
 
   it('PokemonList.max() testing: ', () => {
-    pokemonList.add('test1', 'test2');
-    pokemonList.add('test3', 'test4');
-    console.log(pokemonList, Math.max(pokemonList));
-
-    const strongestPokemon = Math.max(pokemonList);
-    expect(strongestPokemon).to.be.equal(pokemonList[pokemonList.length])
-
+    pokemonList.add('test1', 2);
+    pokemonList.add('test3', 4);
+    pokemonList.forEach(pokemon => {
+      expect(pokemon).to.have.property('valueOf');
+      assert.typeOf(pokemon.valueOf(), 'Number');
+    });
+    const strongestPokemon = Math.max(...pokemonList);
+    expect(strongestPokemon).to.be.equal(4);
   });
  
 });
 
+describe('REST API', () => {
+  let server;
+  let x = require('../app');
+console.log(x.f)
+// .then(() => {
+//     console.log(`App listening on port ${PORT}!`);
+//     server = supertest.agent('http://localhost:3000');
+//   });
+      
 
 
-// Напишите тесты на метод max класса PokemonList;
-// в this лежат числа, убедиться, что возвращает наибольшее  в strongestPokemon, 
-// если массив из одного числа вернет его, если массив пустой - ошибка
+});
 
-// При написании тестов грамотно организовывайте тесты 
-// по файлам и наборам. И максимально используйте хуки, и другие возможности Mocha, чтобы тесты соответствовали принципу DRY.
