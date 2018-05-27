@@ -6,7 +6,7 @@ const expect = require('chai').expect;
 const assert = require('chai').assert;
 const supertest = require('supertest');
 
-describe('PokemonTesting', () => {
+describe.skip('PokemonTesting', () => {
   it('Pokemon.show() testing: returns Pokemon object with propertys name/level', () => {
     const pokemon = new Pokemon('test1', 'test2');
     expect(pokemon).to.have.property('name');
@@ -16,7 +16,7 @@ describe('PokemonTesting', () => {
   });
 });
 
-describe('PokemonListTesting', () => {
+describe.skip('PokemonListTesting', () => {
   let pokemonList, pokemon;
 
   beforeEach(() => {
@@ -56,12 +56,50 @@ describe('PokemonListTesting', () => {
 
 describe('REST API', () => {
   let server;
-require('../app')()
+
+  beforeEach((done) => {
+    server = app.listen(done);
+  });
+
+  afterEach((done) => {
+    server.close(done);
+  });
+
+  const call = require('../app');
+  
+  call()
   .then(() => {
-      console.log(`App listening on port ${PORT}!`);
       server = supertest.agent('http://localhost:3000');
-    });
-      
+      it('POST /add должен вернуть id пользователя', (done) => {
+        server
+          .post('/add')
+          .send({name: 'Boris', userId: 100})
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .end((err, res) => {
+            if (err) { 
+              console.error(err)
+              done(); 
+            }
+            assert.equal(res.status, 200);
+            assert.ok(res.body);
+            assert.equal(res.body.userId, 100);
+          });
+      });
+      it.skip('GET /delete/::userId должен вернуть код 200', (done) => {
+        server
+          .get('/delete/:userId')
+          .expect(200)
+          .end((err, res) => {
+            if (err) { 
+              console.error(err)
+              done(); 
+            }
+            assert.equal(res.status, 200);
+          });
+      });
+  })
+  .catch(err => console.error(err));
 
 
 });
